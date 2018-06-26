@@ -81,6 +81,9 @@ def reset():
 	cellentries[0][0].select_range(0,END)
 	cellentries[0][0].focus()
 
+def findbox(i,j):
+	return (i//3)*3 + j//3 + 1
+
 def gui_setup():
 	global cellentries,cellvalues
 	cellentries = []
@@ -89,7 +92,8 @@ def gui_setup():
 	descriptionframe=Frame(root,bg='black')
 	desctext='Welcome to Sudoku Solver!\nEnter an unsolved sudoku (0 for blank places) here,\nor \
 select an input file to read from, and then press Solve!'
-	Label(descriptionframe,bg='black',fg='green',text=desctext).pack(side=LEFT)
+	desclabel=Label(descriptionframe,bg='black',fg='aquamarine',text=desctext,font=("Arial",10))
+	desclabel.pack(side=LEFT)
 	descriptionframe.pack()
 
 	for i in range(9):
@@ -110,7 +114,10 @@ select an input file to read from, and then press Solve!'
 		cellentries.append([None for _ in range(9)])
 		for j in range(9):
 			cellframes[i][j]=Frame(rowframes[i],height=20,width=20,relief=SUNKEN,borderwidth=2,bg='black')
-			cellentries[i][j]=Entry(cellframes[i][j],textvariable=cellvalues[i][j],width=3)
+			if findbox(i,j) in (2,4,6,8):
+				cellentries[i][j]=Entry(cellframes[i][j],textvariable=cellvalues[i][j],width=3)
+			else:
+				cellentries[i][j]=Entry(cellframes[i][j],textvariable=cellvalues[i][j],width=3,bg='pale green')
 			cellentries[i][j].pack()
 			cellframes[i][j].pack(side=LEFT)
 			if j in (2,5):
