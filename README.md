@@ -10,3 +10,8 @@ Clone this repo.
 # Input format:
 - Please input digits 0 through 9 for each cell.
 - 0 stands for a blank box, while 1-9 indicates a pre-filled box.
+
+The solver can only solve puzzles which are "valid" sudokus i.e., which are solvable and contain only one unique solution.
+
+# Reporting bugs or improvements:
+Bugs or improvements can be sent by opening a new issue or PR here.
