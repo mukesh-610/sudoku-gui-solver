@@ -66,10 +66,7 @@ def focus():
 	
 def changefocus(e):
 	global focusedi, focusedj
-	if focusedi == 8 and focusedj == 8:
-		focusedi = 0
-		focusedj = 0
-	elif focusedj < 8:
+	if focusedi !=8 and focusedj < 8:
 		focusedj += 1
 	else:
 		focusedi += 1
@@ -94,6 +91,12 @@ def focus_previous(e):
 		focusedj = 8
 	else:
 		focusedj -= 1
+	focus()
+
+def update_focus_on_click(e,x,y):
+	global focusedi,focusedj
+	focusedi = x
+	focusedj = y
 	focus()
 
 def gui_setup():
@@ -129,6 +132,7 @@ select an input file to read from, and then press Solve!'
 				cellentries[i][j]=Entry(cellframes[i][j],textvariable=cellvalues[i][j],width=3,bg='pale green')
 			for x in range(10):
 				cellentries[i][j].bind(str(x),changefocus)
+			cellentries[i][j].bind('<FocusIn>',lambda e,x=i,y=j:update_focus_on_click(e,x,y))
 			cellentries[i][j].bind('<BackSpace>',focus_previous)
 			cellentries[i][j].pack()
 			cellframes[i][j].pack(side=LEFT)
