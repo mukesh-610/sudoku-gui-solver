@@ -14,9 +14,14 @@ cellvalues=[[]]*9
 focusedi=focusedj=0
 
 def cast_to_list_of_lists(cellvalues):
-	ret=[[]]*9
+	ret=[]
 	for i in range(9):
-		ret[i]=[cellvalues[i][j].get() for j in range(9)]
+		ret.append([])
+		for j in range(9):
+			try:
+				ret[i].append(cellvalues[i][j].get())
+			except:
+				ret[i].append(0)
 	return ret
 
 def set_IntVals(list_of_lists,IntVal_list):
@@ -54,35 +59,42 @@ def solve():
 	sudoku=cast_to_list_of_lists(cellvalues)
 	set_IntVals(sudoku_solver.solve(sudoku),cellvalues)
 
-def changefocus():
+def focus():
+	global focusedi,focusedj
+	cellentries[focusedi][focusedj].select_range(0,END)
+	cellentries[focusedi][focusedj].focus()
+	
+def changefocus(e):
 	global focusedi, focusedj
 	if focusedi == 8 and focusedj == 8:
 		focusedi = 0
-		focusedj = -1
-		return
-	try:
-		if cellvalues[focusedi][focusedj].get() in range(10):
-			if focusedj < 8:
-				focusedj += 1
-			else:
-				focusedi += 1
-				focusedj = 0
-			cellentries[focusedi][focusedj].select_range(0,END)
-			cellentries[focusedi][focusedj].focus()
-	except:
-		pass
-
+		focusedj = 0
+	elif focusedj < 8:
+		focusedj += 1
+	else:
+		focusedi += 1
+		focusedj = 0
+	focus()
+	
 def reset():
 	global focusedi, focusedj
 	focusedi = focusedj = 0
 	for row in cellvalues:
 		for cell in row:
 			cell.set(0)
-	cellentries[0][0].select_range(0,END)
-	cellentries[0][0].focus()
-
+	focus()
+	
 def findbox(i,j):
 	return (i//3)*3 + j//3 + 1
+
+def focus_previous(e):
+	global focusedi,focusedj
+	if focusedi != 0 and focusedj == 0:
+		focusedi -= 1
+		focusedj = 8
+	else:
+		focusedj -= 1
+	focus()
 
 def gui_setup():
 	global cellentries,cellvalues
@@ -92,14 +104,11 @@ def gui_setup():
 	descriptionframe=Frame(root,bg='black')
 	desctext='Welcome to Sudoku Solver!\nEnter an unsolved sudoku (0 for blank places) here,\nor \
 select an input file to read from, and then press Solve!'
-	desclabel=Label(descriptionframe,bg='black',fg='aquamarine',text=desctext,font=("Arial",10))
-	desclabel.pack(side=LEFT)
+	Label(descriptionframe,bg='black',fg='green',text=desctext,font=("Arial",10)).pack(side=LEFT)
 	descriptionframe.pack()
 
 	for i in range(9):
 		cellvalues[i]=[IntVar() for _ in range(9)]
-		for j in range(9):
-			cellvalues[i][j].trace('w',lambda nm,idx,mode:changefocus())
 	
 	for i in range(3):
 		boxrowframes[i]=Frame(root,height=60,pady=2,width=180,bg='black',padx=4)
@@ -118,6 +127,9 @@ select an input file to read from, and then press Solve!'
 				cellentries[i][j]=Entry(cellframes[i][j],textvariable=cellvalues[i][j],width=3)
 			else:
 				cellentries[i][j]=Entry(cellframes[i][j],textvariable=cellvalues[i][j],width=3,bg='pale green')
+			for x in range(10):
+				cellentries[i][j].bind(str(x),changefocus)
+			cellentries[i][j].bind('<BackSpace>',focus_previous)
 			cellentries[i][j].pack()
 			cellframes[i][j].pack(side=LEFT)
 			if j in (2,5):
