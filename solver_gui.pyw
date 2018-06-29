@@ -86,7 +86,9 @@ def findbox(i,j):
 
 def focus_previous(e):
 	global focusedi,focusedj
-	if focusedi != 0 and focusedj == 0:
+	if focusedi == 0 and focusedj == 0:
+		return
+	elif focusedj == 0:
 		focusedi -= 1
 		focusedj = 8
 	else:
