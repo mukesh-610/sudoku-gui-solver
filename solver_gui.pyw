@@ -37,12 +37,15 @@ def set_sudoku_from_file(fw,f):
 
 def read_from_file():
 	filename=StringVar()
+	filename.set('puzzfile.txt')
 	file_window = Toplevel(root,bg='black')
+	file_window.grab_set()
 	namebox_frame = Frame(file_window,bg='black')
 	prompt_text = Label(namebox_frame,text='Enter the full path of the input file:',bg='black',fg='green')
 	prompt_text.pack()
 	namebox = Entry(namebox_frame,textvariable=filename,width=46)
 	namebox.pack()
+	namebox.select_range(0,END)
 	namebox.focus()
 	namebox_frame.pack()
 	warningframe = Frame(file_window,bg='yellow')
@@ -66,11 +69,14 @@ def focus():
 	
 def changefocus(e):
 	global focusedi, focusedj
-	if focusedi !=8 and focusedj < 8:
-		focusedj += 1
-	else:
+	if focusedj == 8 and focusedi == 8:
+		focus()
+		return
+	elif focusedj == 8:
 		focusedi += 1
 		focusedj = 0
+	else:
+		focusedj += 1
 	focus()
 	
 def reset():
@@ -84,16 +90,18 @@ def reset():
 def findbox(i,j):
 	return (i//3)*3 + j//3 + 1
 
-def focus_previous(e):
+def focus_previous(e,x,y):
+	cellvalues[x][y].set(0)
 	global focusedi,focusedj
 	if focusedi == 0 and focusedj == 0:
-		return
+		pass
 	elif focusedj == 0:
 		focusedi -= 1
 		focusedj = 8
 	else:
 		focusedj -= 1
 	focus()
+	return "break"
 
 def update_focus_on_click(e,x,y):
 	global focusedi,focusedj
@@ -135,7 +143,7 @@ select an input file to read from, and then press Solve!'
 			for x in range(10):
 				cellentries[i][j].bind(str(x),changefocus)
 			cellentries[i][j].bind('<FocusIn>',lambda e,x=i,y=j:update_focus_on_click(e,x,y))
-			cellentries[i][j].bind('<BackSpace>',focus_previous)
+			cellentries[i][j].bind('<BackSpace>',lambda e,x=i,y=j:focus_previous(e,x,y))
 			cellentries[i][j].pack()
 			cellframes[i][j].pack(side=LEFT)
 			if j in (2,5):
