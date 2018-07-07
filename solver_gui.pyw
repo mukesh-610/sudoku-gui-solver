@@ -32,7 +32,7 @@ def set_IntVals(list_of_lists,IntVal_list):
 def set_sudoku_from_file(fw,f):
 	filedesc=open(f,'r')
 	contents=filedesc.read()
-	set_IntVals([i.split() for i in contents.replace('\n\n','\n').split('\n')],cellvalues)
+	set_IntVals([i.split() for i in contents.replace('\r','').replace('\n\n','\n').split('\n')],cellvalues)
 	fw.destroy()
 
 def read_from_file():
